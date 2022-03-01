@@ -29,15 +29,13 @@ class MyTaskPVP(PVP):
     """
 
     # Set this to the name of the task
-    TASK_NAME = "my-task"
+    TASK_NAME = "amazon"
 
     # Set this to the verbalizer for the given task: a mapping from the task's labels (which can be obtained using
     # the corresponding DataProcessor's get_labels method) to tokens from the language model's vocabulary
     VERBALIZER = {
-        "1": ["World"],
-        "2": ["Sports"],
-        "3": ["Business"],
-        "4": ["Tech"]
+        "1": ["good"],
+        "-1": ["bad"]
     }
 
     def get_parts(self, example: InputExample):
@@ -46,22 +44,19 @@ class MyTaskPVP(PVP):
         pattern to it. To allow for multiple patterns, a pattern_id can be passed to the PVP's constructor. This
         method must implement the application of all patterns.
         """
+        text = self.shortenable(example.text_a)
 
-        # We tell the tokenizer that both text_a and text_b can be truncated if the resulting sequence is longer than
-        # our language model's max sequence length.
-        text_a = self.shortenable(example.text_a)
-        text_b = self.shortenable(example.text_b)
-
-        # For each pattern_id, we define the corresponding pattern and return a pair of text a and text b (where text b
-        # can also be empty).
         if self.pattern_id == 0:
-            # this corresponds to the pattern [MASK]: a b
-            return [self.mask, ':', text_a, text_b], []
+            return ['It was', self.mask, '.', text], []
         elif self.pattern_id == 1:
-            # this corresponds to the pattern [MASK] News: a || (b)
-            return [self.mask, 'News:', text_a], ['(', text_b, ')']
+            return [text, '. All in all, it was', self.mask, '.'], []
+        elif self.pattern_id == 2:
+            return ['Just', self.mask, "!"], [text]
+        elif self.pattern_id == 3:
+            return [text], ['In summary, the restaurant is', self.mask, '.']
         else:
             raise ValueError("No pattern implemented for id {}".format(self.pattern_id))
+
 
     def verbalize(self, label) -> List[str]:
         return MyTaskPVP.VERBALIZER[label]

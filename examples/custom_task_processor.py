@@ -15,7 +15,7 @@ To add a new task to PET, both a DataProcessor and a PVP for this task must
 be added. The DataProcessor is responsible for loading training and test data.
 This file shows an example of a DataProcessor for a new task.
 """
-
+import json
 import csv
 import os
 from typing import List
@@ -24,38 +24,37 @@ from pet.task_helpers import MultiMaskTaskHelper
 from pet.tasks import DataProcessor, PROCESSORS, TASK_HELPERS
 from pet.utils import InputExample
 
-
 class MyTaskDataProcessor(DataProcessor):
     """
     Example for a data processor.
     """
 
     # Set this to the name of the task
-    TASK_NAME = "my-task"
+    TASK_NAME = "amazon"
 
     # Set this to the name of the file containing the train examples
-    TRAIN_FILE_NAME = "train.csv"
+    TRAIN_FILE_NAME = "train.json"
 
     # Set this to the name of the file containing the dev examples
-    DEV_FILE_NAME = "dev.csv"
+    DEV_FILE_NAME = "dev.json"
 
     # Set this to the name of the file containing the test examples
-    TEST_FILE_NAME = "test.csv"
+    TEST_FILE_NAME = "test.json"
 
     # Set this to the name of the file containing the unlabeled examples
-    UNLABELED_FILE_NAME = "unlabeled.csv"
+    # UNLABELED_FILE_NAME = "unlabeled.csv"
 
     # Set this to a list of all labels in the train + test data
-    LABELS = ["1", "2", "3", "4"]
+    LABELS = ["1", "-1"]
 
-    # Set this to the column of the train/test csv files containing the input's text a
-    TEXT_A_COLUMN = 1
-
-    # Set this to the column of the train/test csv files containing the input's text b or to -1 if there is no text b
-    TEXT_B_COLUMN = 2
-
-    # Set this to the column of the train/test csv files containing the input's gold label
-    LABEL_COLUMN = 0
+    # # Set this to the column of the train/test csv files containing the input's text a
+    # TEXT_A_COLUMN = 1
+    #
+    # # Set this to the column of the train/test csv files containing the input's text b or to -1 if there is no text b
+    # TEXT_B_COLUMN = 2
+    #
+    # # Set this to the column of the train/test csv files containing the input's gold label
+    # LABEL_COLUMN = 0
 
     def get_train_examples(self, data_dir: str) -> List[InputExample]:
         """
@@ -87,7 +86,7 @@ class MyTaskDataProcessor(DataProcessor):
         :param data_dir: the directory in which the unlabeled data can be found
         :return: a list of unlabeled examples
         """
-        return self._create_examples(os.path.join(data_dir, MyTaskDataProcessor.UNLABELED_FILE_NAME), "unlabeled")
+        return []
 
     def get_labels(self) -> List[str]:
         """This method returns all possible labels for the task."""
@@ -96,15 +95,14 @@ class MyTaskDataProcessor(DataProcessor):
     def _create_examples(self, path, set_type, max_examples=-1, skip_first=0):
         """Creates examples for the training and dev sets."""
         examples = []
-
         with open(path) as f:
-            reader = csv.reader(f, delimiter=',')
-            for idx, row in enumerate(reader):
-                guid = "%s-%s" % (set_type, idx)
-                label = row[MyTaskDataProcessor.LABEL_COLUMN]
-                text_a = row[MyTaskDataProcessor.TEXT_A_COLUMN]
-                text_b = row[MyTaskDataProcessor.TEXT_B_COLUMN] if MyTaskDataProcessor.TEXT_B_COLUMN >= 0 else None
-                example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
+            load_data = json.load(f)
+            for info in load_data.values():
+                label = info['polarity']
+                guid = info['id']
+                text_a = info['sentence']
+
+                example = InputExample(guid=guid, text_a=text_a, label=label)
                 examples.append(example)
 
         return examples

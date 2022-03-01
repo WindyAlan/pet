@@ -1,0 +1,11 @@
+python cli.py \
+--method pet \
+--pattern_ids 0 1 2 3 \
+--data_dir '/home/hanzhang/PyContinual-main/src/dat/dsc/Amazon_Instant_Video' \
+--model_type 'bert' \
+--model_name_or_path 'bert-base-uncased' \
+--task_name 'amazon' \
+--output_dir '/home/hanzhang/pet/res' \
+--no_distillation \
+--do_train \
+--do_eval

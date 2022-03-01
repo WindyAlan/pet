@@ -19,16 +19,21 @@ import argparse
 import os
 from typing import Tuple
 
+from pet.pvp import PVPS
 import torch
-
+from examples import custom_task_processor
+from examples import custom_task_pvp
 from pet.tasks import PROCESSORS, load_examples, UNLABELED_SET, TRAIN_SET, DEV_SET, TEST_SET, METRICS, DEFAULT_METRICS
 from pet.utils import eq_div
 from pet.wrapper import WRAPPER_TYPES, MODEL_CLASSES, SEQUENCE_CLASSIFIER_WRAPPER, WrapperConfig
 import pet
 import log
 
+os.environ["CUDA_VISIBLE_DEVICES"] = '3'
 logger = log.get_logger('root')
 
+print(PROCESSORS)
+print(PVPS)
 
 def load_pet_configs(args) -> Tuple[WrapperConfig, pet.TrainConfig, pet.EvalConfig]:
     """
