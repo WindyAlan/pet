@@ -16,6 +16,7 @@ one of the supported tasks and datasets.
 """
 
 import argparse
+from ast import arg
 import os
 from typing import Tuple
 
@@ -29,7 +30,7 @@ from pet.wrapper import WRAPPER_TYPES, MODEL_CLASSES, SEQUENCE_CLASSIFIER_WRAPPE
 import pet
 import log
 
-os.environ["CUDA_VISIBLE_DEVICES"] = '3'
+os.environ["CUDA_VISIBLE_DEVICES"] = '5'
 logger = log.get_logger('root')
 
 print(PROCESSORS)
@@ -221,7 +222,8 @@ def main():
 
     args = parser.parse_args()
     logger.info("Parameters: {}".format(args))
-
+    
+    # print('args.train_examples: ',args.train_examples)
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) \
             and args.do_train and not args.overwrite_output_dir:
         raise ValueError("Output directory ({}) already exists and is not empty.".format(args.output_dir))

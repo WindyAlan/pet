@@ -38,6 +38,7 @@ def _shuffle_and_restrict(examples: List[InputExample], num_examples: int, seed:
     :param seed: the random seed for shuffling
     :return: the first ``num_examples`` elements of the shuffled list
     """
+    print(num_examples)
     if 0 < num_examples < len(examples):
         random.Random(seed).shuffle(examples)
         examples = examples[:num_examples]
@@ -836,6 +837,7 @@ def load_examples(task, data_dir: str, set_type: str, *_, num_examples: int = No
         raise ValueError(f"'set_type' must be one of {SET_TYPES}, got '{set_type}' instead")
 
     if num_examples is not None:
+        
         examples = _shuffle_and_restrict(examples, num_examples, seed)
 
     elif num_examples_per_label is not None:
